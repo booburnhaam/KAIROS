@@ -1,1 +1,23 @@
 "# Arquivos ignorados pelo Git" 
+
+# Dependências (para projetos futuros)
+node_modules/
+
+# Arquivos de ambiente (senhas, chaves)
+.env
+.env.local
+
+# Pastas de build
+dist/
+build/
+
+# Logs
+*.log
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos temporários
+*.tmp
+*.temp
