@@ -20,12 +20,12 @@ a{color:inherit}
 ::selection{background:var(--gold);color:#141414}
 
 .brand{position:fixed;top:22px;left:50%;transform:translateX(-50%);z-index:20;text-align:center;white-space:nowrap}
-.brand b{font-family:'Cormorant Garamond';letter-spacing:.5em;font-size:.95rem;color:var(--gold2);padding-left:.5em}
-.brand small{display:block;font-size:.48rem;letter-spacing:.44em;text-transform:uppercase;color:var(--muted);padding-left:.44em}
+.brand b{font-family:'Cormorant Garamond';letter-spacing:.5em;font-size:2rem;color:var(--gold2);padding-left:.5em}
+.brand small{display:block;font-size:.70rem;letter-spacing:.44em;text-transform:uppercase;color:var(--muted);padding-left:.44em}
 
 /* menu lateral */
 .menu{position:fixed;right:clamp(18px,3vw,44px);top:50%;transform:translateY(-50%);z-index:20;display:flex;flex-direction:column;gap:10px;align-items:flex-end;user-select:none}
-.menu-item{display:flex;align-items:center;gap:12px;padding:7px 4px;color:var(--muted);font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;transition:.3s}
+.menu-item{display:flex;align-items:center;gap:12px;padding:7px 4px;color:var(--muted);font-size:.75rem;letter-spacing:.28em;text-transform:uppercase;transition:.3s}
 .menu-item .line{width:14px;height:1px;background:currentColor;transition:.35s var(--ease)}
 .menu-item .num{font-family:'Cormorant Garamond';font-style:italic;font-size:.72rem}
 .menu-item:hover,.menu-item.active{color:var(--gold2)}
@@ -95,7 +95,7 @@ a{color:inherit}
 .model:hover{border-color:var(--gold);transform:translateX(6px)}
 .dots{display:flex;gap:5px}
 .dots i{width:12px;height:12px;border-radius:50%;border:1px solid rgba(255,255,255,.2)}
-.model h3{font-size:1.05rem}
+.model h3{font-size:2.05rem}
 .model span{font-size:.68rem;color:var(--muted)}
 .model .pr{margin-left:auto;font-family:'Cormorant Garamond';color:var(--gold2);font-size:1rem;white-space:nowrap}
 
@@ -187,6 +187,7 @@ a{color:inherit}
         <button class="model reveal" style="--d:.12s" onclick="applyPreset('noir')"><span class="dots"><i style="background:#f3d68a"></i><i style="background:#0b0d12"></i><i style="background:#43301f"></i></span><span><h3>Kairos Noir</h3><span>ouro 18k · mostrador noir · couro de javali</span></span><span class="pr">R$ 24.500</span></button>
         <button class="model reveal" style="--d:.18s" onclick="applyPreset('azure')"><span class="dots"><i style="background:#e8ecf2"></i><i style="background:#0d2140"></i><i style="background:#9aa0a8"></i></span><span><h3>Azure 38</h3><span>aço cirúrgico · mostrador azul · bracelete aço</span></span><span class="pr">R$ 19.700</span></button>
         <button class="model reveal" style="--d:.24s" onclick="applyPreset('verde')"><span class="dots"><i style="background:#f2c0a8"></i><i style="background:#0c2a1e"></i><i style="background:#151515"></i></span><span><h3>Verde Imperatriz</h3><span>ouro rosé · mostrador verde · couro negro</span></span><span class="pr">R$ 23.000</span></button>
+         <button class="model reveal" style="--d:.28s" onclick="applyPreset('verde')"><span class="dots"><i style="background:#f2c0a8"></i><i style="background:#0c2a1e"></i><i style="background:#151515"></i></span><span><h3>Teste</h3><span>ouro rosé · mostrador verde · couro negro</span></span><span class="pr">R$ 23.000</span></button>
       </div>
     </section>
 
