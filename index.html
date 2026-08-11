@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KAIROS · haute horlogerie</title>
+<meta name="description" content="Uma maison de relojoaria onde o site é um relógio vivo: configure sua peça em tempo real."/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070708'/%3E%3Ccircle cx='32' cy='32' r='20' fill='none' stroke='%23c9a961' stroke-width='3'/%3E%3Cpath d='M32 20v12l8 6' stroke='%23c9a961' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070708;--ink:#f2ede3;--muted:rgba(242,237,227,.55);--gold:#c9a961;--gold2:#ecd9a8;--line:rgba(201,169,97,.25);--ease:cubic-bezier(.22,1,.36,1)}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;background:repeating-conic-gradient(from 0deg at 50% 50%,rgba(201,169,97,.03) 0deg 1deg,transparent 1deg 4deg);pointer-events:none}
+h1,h2,h3{font-family:'Cormorant Garamond',serif;font-weight:600}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+::selection{background:var(--gold);color:#141414}
+
+.brand{position:fixed;top:22px;left:50%;transform:translateX(-50%);z-index:20;text-align:center;white-space:nowrap}
+.brand b{font-family:'Cormorant Garamond';letter-spacing:.5em;font-size:.95rem;color:var(--gold2);padding-left:.5em}
+.brand small{display:block;font-size:.48rem;letter-spacing:.44em;text-transform:uppercase;color:var(--muted);padding-left:.44em}
+
+/* menu lateral */
+.menu{position:fixed;right:clamp(18px,3vw,44px);top:50%;transform:translateY(-50%);z-index:20;display:flex;flex-direction:column;gap:10px;align-items:flex-end;user-select:none}
+.menu-item{display:flex;align-items:center;gap:12px;padding:7px 4px;color:var(--muted);font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;transition:.3s}
+.menu-item .line{width:14px;height:1px;background:currentColor;transition:.35s var(--ease)}
+.menu-item .num{font-family:'Cormorant Garamond';font-style:italic;font-size:.72rem}
+.menu-item:hover,.menu-item.active{color:var(--gold2)}
+.menu-item:hover .line,.menu-item.active .line{width:34px}
+.menu-item.active .line{background:linear-gradient(90deg,var(--gold),var(--gold2))}
+
+/* palco: relógio à esquerda, cenas à direita */
+.stage{position:fixed;inset:0;display:grid;grid-template-columns:46% 54%;padding:70px clamp(70px,8vw,120px) 40px clamp(24px,4vw,70px)}
+.watch-zone{display:grid;place-items:center;position:relative}
+
+/* ===== O RELÓGIO ===== */
+.watch{--caseA:#8a6a2f;--caseB:#f3d68a;--dial:#0b0d12;--dialHi:#232837;--strap:#43301f;position:relative;width:min(42vh,340px);aspect-ratio:1;filter:drop-shadow(0 34px 60px rgba(0,0,0,.75))}
+.strap{position:absolute;left:50%;transform:translateX(-50%);width:44%;height:24%;background:var(--strap);border-radius:10px;box-shadow:inset 0 0 18px rgba(0,0,0,.5)}
+.strap.t{top:-19%}.strap.b{bottom:-19%}
+.strap::after{content:"";position:absolute;inset:0;border-radius:inherit;background:repeating-linear-gradient(0deg,transparent 0 9px,rgba(0,0,0,.25) 9px 10px)}
+.case{position:absolute;inset:0;border-radius:50%;padding:9px;background:conic-gradient(from 210deg,var(--caseA),var(--caseB),var(--caseA),var(--caseB),var(--caseA));box-shadow:0 0 0 1px rgba(0,0,0,.6),inset 0 2px 6px rgba(255,255,255,.35)}
+.crown{position:absolute;right:-13px;top:50%;transform:translateY(-50%);width:13px;height:26px;border-radius:4px;background:repeating-linear-gradient(0deg,var(--caseB) 0 3px,var(--caseA) 3px 5px)}
+.dial{position:relative;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 35% 28%,var(--dialHi),var(--dial) 72%);box-shadow:inset 0 0 30px rgba(0,0,0,.8);overflow:hidden}
+.track{position:absolute;inset:3%;border-radius:50%;background:repeating-conic-gradient(rgba(255,255,255,.3) 0deg .5deg,transparent .5deg 6deg);-webkit-mask:radial-gradient(circle,transparent 58%,#000 59%);mask:radial-gradient(circle,transparent 58%,#000 59%)}
+.marks{position:absolute;inset:7%}
+.mark{position:absolute;inset:0}
+.mark::before{content:"";position:absolute;top:0;left:50%;width:3px;height:9%;margin-left:-1.5px;background:var(--gold2);box-shadow:0 0 6px rgba(236,217,168,.4)}
+.mark.q::before{width:5px;margin-left:-2.5px;height:12%}
+.logo{position:absolute;top:24%;left:0;right:0;text-align:center;font-family:'Cormorant Garamond';letter-spacing:.4em;font-size:.72rem;color:var(--gold2);padding-left:.4em}
+.engr{position:absolute;top:36%;left:0;right:0;text-align:center;font-family:'Cormorant Garamond';font-style:italic;font-size:.66rem;color:rgba(236,217,168,.75);min-height:1em}
+.subdial{position:absolute;bottom:14%;left:50%;transform:translateX(-50%);width:24%;aspect-ratio:1;border-radius:50%;border:1px solid rgba(236,217,168,.35);background:rgba(0,0,0,.3)}
+.hand{position:absolute;left:50%;bottom:50%;transform-origin:50% 100%;border-radius:6px}
+.hand.hh{width:5px;margin-left:-2.5px;height:26%;background:linear-gradient(var(--gold2),var(--gold2))}
+.hand.hm{width:3px;margin-left:-1.5px;height:38%;background:var(--gold2)}
+.hand.hs{width:1.5px;margin-left:-.75px;height:44%;background:#e0523d;transition:transform .18s cubic-bezier(.4,2.1,.6,1)}
+.hand.hs::after{content:"";position:absolute;left:50%;top:100%;width:5px;height:14%;margin-left:-2.5px;background:#e0523d;border-radius:3px}
+.hand.hsub{width:1.5px;margin-left:-.75px;height:42%;background:var(--gold2);bottom:50%;left:50%}
+.cap{position:absolute;left:50%;top:50%;width:10px;height:10px;margin:-5px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--gold2),var(--caseA))}
+.glass{position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,.14),transparent 42%);pointer-events:none}
+
+/* cenas */
+.scenes{position:relative}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;opacity:0;visibility:hidden;pointer-events:none}
+.scene.active{opacity:1;visibility:visible;pointer-events:auto}
+.scene.active .reveal{animation:rise .9s var(--ease) forwards;animation-delay:calc(.15s + var(--d,0s))}
+.reveal{opacity:0;transform:translateY(24px)}
+@keyframes rise{to{opacity:1;transform:none}}
+.scene.leaving{opacity:1;visibility:visible}
+.scene.leaving .reveal{opacity:1;transform:none;animation:none}
+.scene.active.enter-r{animation:inR .7s var(--ease) both}.scene.active.enter-l{animation:inL .7s var(--ease) both}
+.scene.exit-l{animation:outL .7s var(--ease) both}.scene.exit-r{animation:outR .7s var(--ease) both}
+@keyframes inR{from{opacity:0;transform:translateX(60px);filter:blur(10px)}to{opacity:1;transform:none;filter:none}}
+@keyframes inL{from{opacity:0;transform:translateX(-60px);filter:blur(10px)}to{opacity:1;transform:none;filter:none}}
+@keyframes outL{to{opacity:0;transform:translateX(-50px);filter:blur(8px)}}
+@keyframes outR{to{opacity:0;transform:translateX(50px);filter:blur(8px)}}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:.58rem;letter-spacing:.36em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--gold)}
+.scene h1{font-size:clamp(2.1rem,4.2vw,3.6rem);line-height:1.06}
+.scene h2{font-size:clamp(1.6rem,3vw,2.4rem);margin-bottom:10px}
+.scene p{color:var(--muted);line-height:1.75;font-size:clamp(.86rem,.95vw,.95rem);max-width:46ch;font-weight:300}
+.it{font-style:italic;color:var(--gold2)}
+.btn-row{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+.btn{padding:13px 26px;border-radius:2px;font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;transition:.35s var(--ease);border:1px solid transparent;text-decoration:none}
+.btn.solid{background:linear-gradient(100deg,var(--gold),var(--gold2));color:#141414;font-weight:500}
+.btn.solid:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(201,169,97,.3)}
+.btn.ghost{border-color:rgba(201,169,97,.5);color:var(--gold2)}
+.btn.ghost:hover{background:rgba(201,169,97,.12)}
+
+/* coleção */
+.models{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+.model{display:flex;align-items:center;gap:16px;border:1px solid var(--line);border-radius:8px;padding:12px 16px;transition:.3s;text-align:left}
+.model:hover{border-color:var(--gold);transform:translateX(6px)}
+.dots{display:flex;gap:5px}
+.dots i{width:12px;height:12px;border-radius:50%;border:1px solid rgba(255,255,255,.2)}
+.model h3{font-size:1.05rem}
+.model span{font-size:.68rem;color:var(--muted)}
+.model .pr{margin-left:auto;font-family:'Cormorant Garamond';color:var(--gold2);font-size:1rem;white-space:nowrap}
+
+/* atelier */
+.opt-g{margin-top:14px}
+.opt-g label{display:block;font-size:.56rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:7px 14px;transition:.3s}
+.chip.on{color:#141414;background:var(--gold2);border-color:var(--gold2)}
+#engrIn{margin-top:4px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:4px;padding:10px 14px;color:var(--ink);font:inherit;font-size:.8rem;outline:none;width:min(260px,80%)}
+#engrIn:focus{border-color:var(--gold)}
+.price-row{display:flex;align-items:baseline;gap:18px;margin-top:20px;flex-wrap:wrap}
+#price{font-family:'Cormorant Garamond';font-size:clamp(1.5rem,2.6vw,2.1rem);color:var(--gold2)}
+.price-row small{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+/* herança */
+.timeline{display:flex;gap:clamp(14px,2vw,30px);margin-top:22px}
+.tl{border-top:1px solid var(--line);padding-top:12px;flex:1}
+.tl b{font-family:'Cormorant Garamond';font-size:1.3rem;color:var(--gold2);display:block;margin-bottom:6px}
+.tl p{font-size:.72rem}
+
+/* concierge */
+.crow2{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;font-size:.78rem;color:var(--muted)}
+#toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,20px);opacity:0;z-index:50;background:#0d0d10;border:1px solid var(--gold);border-radius:999px;padding:10px 24px;font-size:.7rem;letter-spacing:.14em;color:var(--gold2);transition:.4s var(--ease);pointer-events:none}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.hint{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);font-size:.55rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(242,237,227,.3)}
+
+@media(max-width:860px){
+  .stage{grid-template-columns:1fr;grid-template-rows:auto 1fr;padding:70px 18px 60px;gap:6px}
+  .watch{width:min(24vh,200px)}
+  .menu{flex-direction:row;right:0;left:0;top:auto;bottom:0;transform:none;justify-content:center;gap:4px;padding:10px;background:linear-gradient(0deg,rgba(7,7,8,.95),transparent)}
+  .menu-item{flex-direction:column;gap:4px;font-size:.5rem}
+  .menu-item .num{display:none}
+  .timeline{flex-wrap:wrap}.tl{flex:1 1 40%}
+  .hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s !important;transition-duration:.001s !important}}
+</style>
+</head>
+<body>
+
+<header class="brand"><b>KAIROS</b><small>haute horlogerie · desde 1898</small></header>
+
+<nav class="menu" aria-label="Seções">
+  <button type="button" class="menu-item active" data-i="0"><span class="num">I</span><span class="line"></span><span>Maison</span></button>
+  <button type="button" class="menu-item" data-i="1"><span class="num">II</span><span class="line"></span><span>Coleção</span></button>
+  <button type="button" class="menu-item" data-i="2"><span class="num">III</span><span class="line"></span><span>Atelier</span></button>
+  <button type="button" class="menu-item" data-i="3"><span class="num">IV</span><span class="line"></span><span>Herança</span></button>
+  <button type="button" class="menu-item" data-i="4"><span class="num">V</span><span class="line"></span><span>Concierge</span></button>
+</nav>
+
+<div class="stage">
+  <div class="watch-zone">
+    <div class="watch" id="watch">
+      <div class="strap t"></div><div class="strap b"></div>
+      <div class="case">
+        <div class="crown"></div>
+        <div class="dial">
+          <div class="track"></div>
+          <div class="marks" id="marks"></div>
+          <div class="logo">KAIROS</div>
+          <div class="engr" id="engrTxt"></div>
+          <div class="subdial"><div class="hand hsub" id="hSub"></div></div>
+          <div class="hand hh" id="hH"></div>
+          <div class="hand hm" id="hM"></div>
+          <div class="hand hs" id="hS"></div>
+          <div class="cap"></div>
+          <div class="glass"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scenes">
+    <section class="scene active">
+      <p class="eyebrow reveal">a maison</p>
+      <h1 class="reveal" style="--d:.08s">O tempo é a única<br>obra que <span class="it">você veste</span>.</h1>
+      <p class="reveal" style="--d:.16s">Desde 1898, a Kairos monta relógios como quem escreve cartas à mão: devagar, com intenção. Este relógio ao lado marca a sua hora real — e pode marcar a sua história.</p>
+      <div class="btn-row reveal" style="--d:.24s">
+        <button class="btn solid" onclick="goTo(2)">configurar minha peça</button>
+        <button class="btn ghost" onclick="goTo(1)">ver coleção</button>
+      </div>
+    </section>
+
+    <section class="scene">
+      <p class="eyebrow reveal">coleção 2026</p>
+      <h2 class="reveal" style="--d:.06s">Três maneiras de parar o tempo</h2>
+      <div class="models">
+        <button class="model reveal" style="--d:.12s" onclick="applyPreset('noir')"><span class="dots"><i style="background:#f3d68a"></i><i style="background:#0b0d12"></i><i style="background:#43301f"></i></span><span><h3>Kairos Noir</h3><span>ouro 18k · mostrador noir · couro de javali</span></span><span class="pr">R$ 24.500</span></button>
+        <button class="model reveal" style="--d:.18s" onclick="applyPreset('azure')"><span class="dots"><i style="background:#e8ecf2"></i><i style="background:#0d2140"></i><i style="background:#9aa0a8"></i></span><span><h3>Azure 38</h3><span>aço cirúrgico · mostrador azul · bracelete aço</span></span><span class="pr">R$ 19.700</span></button>
+        <button class="model reveal" style="--d:.24s" onclick="applyPreset('verde')"><span class="dots"><i style="background:#f2c0a8"></i><i style="background:#0c2a1e"></i><i style="background:#151515"></i></span><span><h3>Verde Imperatriz</h3><span>ouro rosé · mostrador verde · couro negro</span></span><span class="pr">R$ 23.000</span></button>
+      </div>
+    </section>
+
+    <section class="scene">
+      <p class="eyebrow reveal">atelier · configure</p>
+      <h2 class="reveal" style="--d:.06s">A sua complicação pessoal</h2>
+      <div class="opt-g reveal" style="--d:.1s"><label>caixa</label><div class="chips" data-g="cs">
+        <button class="chip on" data-v="gold">ouro 18k</button><button class="chip" data-v="steel">aço</button><button class="chip" data-v="rose">ouro rosé</button></div></div>
+      <div class="opt-g reveal" style="--d:.14s"><label>mostrador</label><div class="chips" data-g="dl">
+        <button class="chip on" data-v="black">noir</button><button class="chip" data-v="blue">azul</button><button class="chip" data-v="green">verde</button></div></div>
+      <div class="opt-g reveal" style="--d:.18s"><label>pulseira</label><div class="chips" data-g="st">
+        <button class="chip on" data-v="leather">couro</button><button class="chip" data-v="black">couro negro</button><button class="chip" data-v="steel">bracelete aço</button></div></div>
+      <div class="opt-g reveal" style="--d:.22s"><label>gravação (opcional)</label><input id="engrIn" maxlength="22" placeholder="ex.: para sempre, M."></div>
+      <div class="price-row reveal" style="--d:.26s"><span id="price">R$ 24.500</span><small>estimativa · impostos incl.</small></div>
+      <div class="btn-row reveal" style="--d:.3s"><button class="btn solid" id="reserve">reservar esta peça</button></div>
+    </section>
+
+    <section class="scene">
+      <p class="eyebrow reveal">herança</p>
+      <h2 class="reveal" style="--d:.06s">Quatro gerações, um ponteiro</h2>
+      <div class="timeline">
+        <div class="tl reveal" style="--d:.12s"><b>1898</b><p>Elias Kairos abre a bancada nº 1 com uma lupa emprestada.</p></div>
+        <div class="tl reveal" style="--d:.18s"><b>1932</b><p>O primeiro calibre próprio: 198 peças, zero pressa.</p></div>
+        <div class="tl reveal" style="--d:.24s"><b>1971</b><p>Recusa a produção em massa. "Relógio não é estoque."</p></div>
+        <div class="tl reveal" style="--d:.3s"><b>2026</b><p>Este site-relógio: a primeira vitrine que marca a hora do cliente.</p></div>
+      </div>
+    </section>
+
+    <section class="scene">
+      <p class="eyebrow reveal">concierge</p>
+      <h2 class="reveal" style="--d:.06s">Uma hora marcada,<br>no <span class="it">seu fuso</span>.</h2>
+      <p class="reveal" style="--d:.14s">Atendimento privado com um mestre relojoeiro, presencial ou por vídeo. A peça configurada chega com certificado, estojo de nogueira e a gravação que você escolheu.</p>
+      <div class="crow2 reveal" style="--d:.2s"><span>concierge@kairos.watch</span><span>·</span><span>+55 11 4002-1898</span><span>·</span><span>Rua do Ouro, 1 · São Paulo</span></div>
+      <div class="btn-row reveal" style="--d:.26s"><a class="btn solid" href="https://wa.me/5511999999999" target="_blank" rel="noopener">falar com o concierge</a></div>
+    </section>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div class="hint">menu lateral · o relógio marca a sua hora real</div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const scenes=$$('.scene'),items=$$('.menu-item');
+let current=0,busy=false;
+
+/* índices do mostrador */
+const mk=$('#marks');
+for(let i=0;i<12;i++){const d=document.createElement('div');d.className='mark'+(i%3===0?' q':'');d.style.transform=`rotate(${i*30}deg)`;mk.appendChild(d);}
+
+/* hora real com tique mecânico */
+function tick(){const n=new Date(),s=n.getSeconds(),m=n.getMinutes(),h=n.getHours()%12;
+ $('#hS').style.transform=`rotate(${s*6}deg)`;
+ $('#hM').style.transform=`rotate(${m*6+s*.1}deg)`;
+ $('#hH').style.transform=`rotate(${h*30+m*.5}deg)`;
+ $('#hSub').style.transform=`rotate(${s*6}deg)`;}
+tick();setInterval(tick,1000);
+
+/* navegação */
+function goTo(i,dir){
+ if(busy||i===current)return;busy=true;
+ dir=dir||(i>current?'right':'left');
+ const out=scenes[current],inn=scenes[i];
+ out.classList.remove('active');out.classList.add('leaving',dir==='right'?'exit-l':'exit-r');
+ inn.classList.add('active',dir==='right'?'enter-r':'enter-l');
+ current=i;
+ items.forEach((b,k)=>b.classList.toggle('active',k===i));
+ setTimeout(()=>{out.classList.remove('leaving','exit-l','exit-r');inn.classList.remove('enter-r','enter-l');busy=false;},750);
+}
+items.forEach(b=>b.addEventListener('click',()=>goTo(+b.dataset.i)));
+addEventListener('keydown',e=>{
+ if(e.key==='ArrowRight')goTo(Math.min(4,current+1));
+ else if(e.key==='ArrowLeft')goTo(Math.max(0,current-1));
+});
+
+/* ===== configurador ===== */
+const OPT={
+ cs:{gold:{a:'#8a6a2f',b:'#f3d68a',add:6000,n:'ouro 18k'},steel:{a:'#7d838c',b:'#e8ecf2',add:0,n:'aço'},rose:{a:'#8f5a44',b:'#f2c0a8',add:4500,n:'ouro rosé'}},
+ dl:{black:{d:'#0b0d12',h:'#232837',add:0,n:'noir'},blue:{d:'#0d2140',h:'#274a78',add:800,n:'azul'},green:{d:'#0c2a1e',h:'#1f5a40',add:800,n:'verde'}},
+ st:{leather:{s:'#43301f',add:0,n:'couro'},black:{s:'#151515',add:0,n:'couro negro'},steel:{s:'#9aa0a8',add:1200,n:'bracelete aço'}}
+};
+let sel={cs:'gold',dl:'black',st:'leather'};
+function apply(){
+ const w=$('#watch'),c=OPT.cs[sel.cs],d=OPT.dl[sel.dl],s=OPT.st[sel.st];
+ w.style.setProperty('--caseA',c.a);w.style.setProperty('--caseB',c.b);
+ w.style.setProperty('--dial',d.d);w.style.setProperty('--dialHi',d.h);
+ w.style.setProperty('--strap',s.s);
+ const engr=$('#engrIn').value.trim();
+ $('#engrTxt').textContent=engr?'“'+engr+'”':'';
+ const price=18500+c.add+d.add+s.add+(engr?350:0);
+ $('#price').textContent='R$ '+price.toLocaleString('pt-BR');
+ $$('.chips').forEach(g=>{const grp=g.dataset.g;g.querySelectorAll('.chip').forEach(ch=>ch.classList.toggle('on',ch.dataset.v===sel[grp]));});
+ return price;
+}
+$$('.chips .chip').forEach(ch=>ch.addEventListener('click',()=>{sel[ch.closest('.chips').dataset.g]=ch.dataset.v;apply();}));
+$('#engrIn').addEventListener('input',apply);
+function applyPreset(p){
+ if(p==='noir')sel={cs:'gold',dl:'black',st:'leather'};
+ if(p==='azure')sel={cs:'steel',dl:'blue',st:'steel'};
+ if(p==='verde')sel={cs:'rose',dl:'green',st:'black'};
+ apply();goTo(2);toast('✦ Peça carregada no atelier');
+}
+$('#reserve').addEventListener('click',()=>{
+ const p=apply(),c=OPT.cs[sel.cs].n,d=OPT.dl[sel.dl].n,s=OPT.st[sel.st].n,e=$('#engrIn').value.trim();
+ const t=`⌚ RESERVA KAIROS%0ACaixa: ${c}%0AMostrador: ${d}%0APulseira: ${s}%0AGravação: ${e||'—'}%0AEstimativa: R$ ${p.toLocaleString('pt-BR')}`;
+ window.open('https://wa.me/5511999999999?text='+t,'_blank');
+ toast('✦ Abrindo reserva no WhatsApp…');
+});
+
+let tT;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('on'),2400);}
+apply();
+</script>
+</body>
+</html>
